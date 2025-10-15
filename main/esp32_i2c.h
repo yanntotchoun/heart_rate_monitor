@@ -14,4 +14,7 @@
 #define I2C_MASTER_SDA_IO 21
 
 esp_err_t max30102_i2c_init(void){};
-esp_err_t readData(i2c_master_dev_handle_t dev, uint8_t data,size_t data_size){};
+esp_err_t max30102_readRegister(uint8_t reg,uint8_t data){};
+esp_err_t max30102_readRegisterN(uint8_t reg,uint8_t data,uint8_t N){};
+esp_err_t max30102_writeRegister(const uint8_t reg_data){};
+esp_err_t max30102_writeRegisterN(const uint8_t reg_data,uint8_t N){};

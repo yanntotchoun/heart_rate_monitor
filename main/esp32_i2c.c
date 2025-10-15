@@ -52,7 +52,7 @@ esp_err_t max30102_readRegister(uint8_t reg,uint8_t data){
 }
 
 //No function overloading in C
-esp_err_t max30102_readRegisterN(uint8_t reg,uint8_t data,uint8_t N){
+esp_err_t max30102_readRegisterN(uint8_t reg,uint8_t data,size_t N){
    
     return i2c_master_transmit_receive(max30102,&reg,1,&data,N, -1);
     
@@ -60,11 +60,11 @@ esp_err_t max30102_readRegisterN(uint8_t reg,uint8_t data,uint8_t N){
 
 esp_err_t max30102_writeRegister(const uint8_t reg_data){
     
-    return i2c_master_transmit(max30102,&reg_data,1,-1);
+    return i2c_master_transmit(max30102,&reg_data,2,-1);
 }
 
 
-esp_err_t max30102_writeRegisterN(const uint8_t reg_data,uint8_t N){
+esp_err_t max30102_writeRegisterN(const uint8_t reg_data,size_t N){
     
     return i2c_master_transmit(max30102,&reg_data,N,-1);
 }
