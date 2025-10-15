@@ -20,6 +20,7 @@
 
 
 //add tag for error handling
+// check for endianess
 esp_error_t max302102_spo2_config(void){
 
     uint8_t val;
@@ -28,7 +29,7 @@ esp_error_t max302102_spo2_config(void){
 
     ESP_RETURN_ON_ERROR(max30102_readRegister(spo2[0],&val));
 
-    val = (val&0x80)|0x6F;//(uint8_t) add this maybe
+    val = 0x6F;
     spo[1]=val;
 
     ESP_RETURN_ON_ERROR(max30102_writeRegister(spo2));
@@ -43,11 +44,66 @@ esp_error_t max302102_mode_config(void){
     mode[0]=MODE_CONFIG_REG;
     ESP_RETURN_ON_ERROR(max30102_readRegister(mode[0],&val));
 
-    val = (val&0x38)|0x06;
+    val = 0x06;
     mode[1]=val;
     ESP_RETURN_ON_ERROR(max30102_writeRegister(mode));
 
 
     return ESP_OK:
 }
+
+
+esp_error_t max302102_int1_config(void){
+    uint8_t val;
+    uint8_t intt[2];
+    intt[0]=INT_EN_REG_1;
+
+    ESP_RETURN_ON_ERROR(max30102_readRegister(intt[0],&val));
+
+    val = 0xC0;
+
+    intt[1]=val;
+    ESP_RETURN_ON_ERROR(max30102_writeRegister(intt));
+
+
+    return ESP_OK:
+}
+
+esp_error_t max302102_int2_config(void){
+    uint8_t val;
+    uint8_t intt[2];
+    intt[0]=INT_EN_REG_2;
+
+    ESP_RETURN_ON_ERROR(max30102_readRegister(intt[0],&val));
+
+    val = 0;
+    
+    intt[1]=val;
+    ESP_RETURN_ON_ERROR(max30102_writeRegister(intt));
+
+
+    return ESP_OK:
+}
+
+esp_error_t max302102_fifo_config(void){
+    uint8_t val;
+    uint8_t fifo[2];
+    fifo[0]=FIFO_CONFIG_REG;
+
+    ESP_RETURN_ON_ERROR(max30102_readRegister(fifo[0],&val));
+
+    val = 0xF7;
+    
+    fifo[1]=val;
+    ESP_RETURN_ON_ERROR(max30102_writeRegister(fifo));
+
+
+    return ESP_OK:
+}
+
+
+
+
+
+
 
