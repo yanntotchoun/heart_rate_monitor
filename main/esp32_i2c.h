@@ -1,11 +1,6 @@
 #ifndef ESP32_I2C_H_
 #define ESP32_I2C_H_
 
-
-#ifdef __cplusplus
-extern "C" {
-#endif
-
 #include "driver/i2c_master.h"
 #include "driver/i2c_slave.h"
 #include "esp_err.h"  
@@ -20,5 +15,3 @@ extern "C" {
 
 esp_err_t max30102_i2c_init(void){};
 esp_err_t readData(i2c_master_dev_handle_t dev, uint8_t data,size_t data_size){};
-
-
