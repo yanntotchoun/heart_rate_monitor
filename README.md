@@ -11,13 +11,13 @@ Device that will measure heart rate and SpO2 with the MAX30102 sensor and output
 
 3.[License]{#license}
 
-##Overview
+## Overview
 
 This project implements a heart-rate and SpO2 monitor using an ESP32 and a MAX30102 sensor.
 Data is transmitted over I2C at 100kHz and visualised through desktop aplication on server
 
 
-##Goals
+## Goals
 
 Current goals
 >Finish implementing I2C and Flash it on ESP32 to see if it works
