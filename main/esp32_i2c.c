@@ -1,8 +1,5 @@
-#include "driver/i2c_master.h"
-#include "driver/i2c_slave.h"
 #include "esp_err.h"  
-#include "esp_log.h"
-#include "esp_check.h"
+#include "esp32_i2c.h"
 
 #define I2C_SLAVE_SCL_IO 2
 #define I2C_SLAVE_SDA_IO 3
@@ -40,31 +37,30 @@ esp_err_t max30102_i2c_init(void){
 
     return ESP_OK;
 }
-
-esp_err_t max30102_readRegister(uint8_t reg,uint8_t data){
-    // i2c transmit is basically a herald to announce that we will read data from 
+  // i2c transmit is basically a herald to announce that we will read data from 
     // i2c receive will go to the register and read 1 byte from that register
-    return i2c_master_transmit_receive(max30102,&reg,1,&data ,1, -1);
     //write buffer (reg) = This contains the bytes you will send to the slave before reading. Usually just the register address inside the sensor.
     //read buffer (data) = This is where the sensor’s response data will be stored.You don’t put anything in it beforehand — you just allocate a buffer big enough to hold the incoming bytes
     // UNDER THE HOOD: START + [SlaveAddr+W] + [reg address] + RESTART + [SlaveAddr+R] + (read data) + STOP
 
+
+esp_err_t max30102_readRegister(uint8_t reg, uint8_t *data){
+    return i2c_master_transmit_receive(max30102, &reg, 1, data, 1, -1);
 }
 
 //No function overloading in C
-esp_err_t max30102_readRegisterN(uint8_t reg,uint8_t data,size_t N){
-   
-    return i2c_master_transmit_receive(max30102,&reg,1,&data,N, -1);
-    
-}
 
-esp_err_t max30102_writeRegister(const uint8_t reg_data){
-    
-    return i2c_master_transmit(max30102,&reg_data,2,-1);
+
+esp_err_t max30102_readRegisterN(uint8_t reg, uint8_t *data, size_t N){
+    return i2c_master_transmit_receive(max30102, &reg, 1, data, N, -1);
 }
 
 
-esp_err_t max30102_writeRegisterN(const uint8_t reg_data,size_t N){
-    
-    return i2c_master_transmit(max30102,&reg_data,N,-1);
+esp_err_t max30102_writeRegister(const uint8_t *reg_data){
+    return i2c_master_transmit(max30102, reg_data, 2, -1);
+}
+
+
+esp_err_t max30102_writeRegisterN(const uint8_t *reg_data, size_t N){
+    return i2c_master_transmit(max30102, reg_data, N, -1);
 }

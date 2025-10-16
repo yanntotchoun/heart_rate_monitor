@@ -1,4 +1,4 @@
-#include "esp32_i2c.h"
+#include "sensor_max30102.h"
 
 #define FIFO_CONFIG_REG 0x08
 #define INT_EN_REG_1 0x02
@@ -18,92 +18,71 @@
 #define DIE_TEMP_FRAC_REG 0x20
 #define DIE_TEMP_CONFIG_REG 0x21
 
+static const char *TAG = "MAX30102";
 
-//add tag for error handling
-// check for endianess
-esp_error_t max302102_spo2_config(void){
-
+esp_err_t max302102_spo2_config(void){
     uint8_t val;
     uint8_t spo2[2];
-    spo[0]=SPO2_CONFIG_REG;
-
-    ESP_RETURN_ON_ERROR(max30102_readRegister(spo2[0],&val));
+    spo2[0] = SPO2_CONFIG_REG;
 
     val = 0x6F;
-    spo[1]=val;
+    spo2[1] = val;
 
-    ESP_RETURN_ON_ERROR(max30102_writeRegister(spo2));
+   
+    ESP_RETURN_ON_ERROR(max30102_writeRegister(spo2), TAG, "failed to write spo2");
 
-
-    return ESP_OK:
+    return ESP_OK; 
 }
 
-esp_error_t max302102_mode_config(void){
+esp_err_t max302102_mode_config(void){
     uint8_t val;
     uint8_t mode[2];
-    mode[0]=MODE_CONFIG_REG;
-    ESP_RETURN_ON_ERROR(max30102_readRegister(mode[0],&val));
+    mode[0] = MODE_CONFIG_REG;
+    
 
     val = 0x06;
-    mode[1]=val;
-    ESP_RETURN_ON_ERROR(max30102_writeRegister(mode));
+    mode[1] = val;
+    
+    ESP_RETURN_ON_ERROR(max30102_writeRegister(mode), TAG, "failed to write mode");
 
-
-    return ESP_OK:
+    return ESP_OK;  
 }
 
-
-esp_error_t max302102_int1_config(void){
+esp_err_t max302102_int1_config(void){
     uint8_t val;
     uint8_t intt[2];
-    intt[0]=INT_EN_REG_1;
-
-    ESP_RETURN_ON_ERROR(max30102_readRegister(intt[0],&val));
+    intt[0] = INT_EN_REG_1;
 
     val = 0xC0;
+    intt[1] = val;
+    
+    ESP_RETURN_ON_ERROR(max30102_writeRegister(intt), TAG, "failed to write int1");
 
-    intt[1]=val;
-    ESP_RETURN_ON_ERROR(max30102_writeRegister(intt));
-
-
-    return ESP_OK:
+    return ESP_OK;  
 }
 
-esp_error_t max302102_int2_config(void){
+esp_err_t max302102_int2_config(void){
     uint8_t val;
     uint8_t intt[2];
-    intt[0]=INT_EN_REG_2;
-
-    ESP_RETURN_ON_ERROR(max30102_readRegister(intt[0],&val));
+    intt[0] = INT_EN_REG_2;
 
     val = 0;
+    intt[1] = val;
     
-    intt[1]=val;
-    ESP_RETURN_ON_ERROR(max30102_writeRegister(intt));
+    ESP_RETURN_ON_ERROR(max30102_writeRegister(intt), TAG, "failed to write int2");
 
-
-    return ESP_OK:
+    return ESP_OK;  
 }
 
-esp_error_t max302102_fifo_config(void){
+esp_err_t max302102_fifo_config(void){
     uint8_t val;
     uint8_t fifo[2];
-    fifo[0]=FIFO_CONFIG_REG;
-
-    ESP_RETURN_ON_ERROR(max30102_readRegister(fifo[0],&val));
+    fifo[0] = FIFO_CONFIG_REG;
 
     val = 0xF7;
+    fifo[1] = val;
     
-    fifo[1]=val;
-    ESP_RETURN_ON_ERROR(max30102_writeRegister(fifo));
+    ESP_RETURN_ON_ERROR(max30102_writeRegister(fifo), TAG, "failed to write fifo");
 
-
-    return ESP_OK:
+    return ESP_OK;  
 }
-
-
-
-
-
-
-
