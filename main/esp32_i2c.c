@@ -16,7 +16,7 @@ esp_err_t max30102_i2c_init(void){
 
     i2c_master_bus_config_t i2c_mst_config = {
     .clk_source = I2C_CLK_SRC_DEFAULT,
-    .i2c_port = I2C_NUM_0,
+    .i2c_port = I2C_NUM_1,
     .scl_io_num = I2C_MASTER_SCL_IO,
     .sda_io_num = I2C_MASTER_SDA_IO,
     .glitch_ignore_cnt = 7,
@@ -33,7 +33,7 @@ esp_err_t max30102_i2c_init(void){
 
     ESP_RETURN_ON_ERROR(i2c_master_bus_add_device(master_bus, &dev_cfg, &max30102),TAG,"Failed to add MAX30102 on master bus");
 
-    ESP_LOGI(TAG, "I2C master ready; MAX30102 @ 0x%02X", MAX30102_ADDR);
+    ESP_LOGI(TAG, "I2C master ready; ESP32 @ 0x%02X", ESP_ADDR);
 
     return ESP_OK;
 }
@@ -64,3 +64,5 @@ esp_err_t max30102_writeRegister(const uint8_t *reg_data){
 esp_err_t max30102_writeRegisterN(const uint8_t *reg_data, size_t N){
     return i2c_master_transmit(max30102, reg_data, N, -1);
 }
+
+//create a function that will read part  id
