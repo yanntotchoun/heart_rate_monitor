@@ -1,4 +1,5 @@
 #include "sensor_max30102.h"
+#include "esp32_i2c.h"
 
 #define FIFO_CONFIG_REG 0x08
 #define INT_EN_REG_1 0x02
@@ -85,4 +86,62 @@ esp_err_t max302102_fifo_config(void){
     ESP_RETURN_ON_ERROR(max30102_writeRegister(fifo), TAG, "failed to write fifo");
 
     return ESP_OK;  
+}
+
+uint8_t readWritePointer(void){
+    uint8_t writePointer;
+    max30102_readRegister(FIFO_W_REG,&writePointer);
+    return writePointer;
+
+}
+
+
+uint8_t readReadPointer(void){
+    uint8_t readPointer;
+    max30102_readRegister(FIFO_R_REG,&readPointer);
+    return readPointer;
+
+}
+
+esp_err_t readMAX30102(uint32_t *irData,uint32_t *redData){
+    uint8_t data[6];// temporary buffer for 3 bytes of Red and 3 bytes of ir
+    uint8_t readPointer,writePointer,samplesToRead,availableSamples;
+
+    readPointer = readReadPointer();
+    writePointer = readWritePointer();
+    
+    //prevent FIFO wraparound
+    if(writePointer>=readPointer){
+         availableSamples = (writePointer-readPointer)&0x1F;
+    }else{
+        availableSamples= (32-readPointer)+writePointer;
+    }
+
+    samplesToRead = availableSamples;// taking a snapshot because new data can come in while we do that
+ 
+    if(samplesToRead > 0){
+        for (size_t i = 0; i < samplesToRead; i++)
+        {
+             max30102_readRegisterN(FIFO_DATA_REG,data,6);
+
+            irData[i] =(data[0]<<16) | (data[1]<<8) | data[2];
+            redData[i]= (data[3]<<16) | (data[4]<<8) | data[5];
+
+            
+        }
+
+        return ESP_OK;
+
+    }else{
+        return ESP_FAIL;
+    }
+    /*
+    data[0] = LED1[23:16]  // Red LED, most significant byte 
+    data[1] = LED1[15:8]   // Red LED, middle byte
+    data[2] = LED1[7:0]    // Red LED, least significant byte
+    data[3] = LED2[23:16]  // IR LED, most significant byte
+    data[4] = LED2[15:8]   // IR LED, middle byte  
+    data[5] = LED2[7:0]    // IR LED, least significant byte
+    */
+
 }

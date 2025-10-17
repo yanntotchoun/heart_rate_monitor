@@ -8,7 +8,7 @@
 #define I2C_MASTER_SCL_IO 22
 #define I2C_MASTER_SDA_IO 21
 
-static const char *TAG = "I2C_MAX";
+static const char *TAG = "I2C";
 static i2c_master_bus_handle_t master_bus=NULL;
 static i2c_master_dev_handle_t max30102=NULL;
 

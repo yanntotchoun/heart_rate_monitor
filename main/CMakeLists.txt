@@ -3,6 +3,7 @@ idf_component_register(
     "main.c"
     "esp32_i2c.c"
     "sensor_max30102.c"
+    "esp32_uart.c"
   INCLUDE_DIRS
     "."
   REQUIRES
@@ -11,4 +12,6 @@ idf_component_register(
     esp_timer          # delays/timestamps if you use them
     log                # ESP_LOGx() macros
     esp_common         # esp_err.h, esp_check.h (ESP_RETURN_ON_ERROR)
+    esp_driver_uart
+
 )
