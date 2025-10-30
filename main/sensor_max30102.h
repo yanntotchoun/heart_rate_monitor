@@ -14,6 +14,7 @@ esp_err_t max302102_fifo_config(void);
 uint8_t readWritePointer(void);
 uint8_t readReadPointer(void);
 esp_err_t readMAX30102(uint32_t *irData,uint32_t *redData);
+esp_err_t readSensor(uint8_t*,uint8_t*);
 
 
 

@@ -7,6 +7,8 @@
 #define MAX30102_ADDR 0x57
 #define I2C_MASTER_SCL_IO 22
 #define I2C_MASTER_SDA_IO 21
+#define REV_ID_REG
+#define PART_ID_REG
 
 static const char *TAG = "I2C";
 static i2c_master_bus_handle_t master_bus=NULL;
@@ -20,7 +22,7 @@ esp_err_t max30102_i2c_init(void){
     .scl_io_num = I2C_MASTER_SCL_IO,
     .sda_io_num = I2C_MASTER_SDA_IO,
     .glitch_ignore_cnt = 7,
-    .flags.enable_internal_pullup = true,
+    .flags.enable_internal_pullup = false,
     };
 
     ESP_RETURN_ON_ERROR(i2c_new_master_bus(&i2c_mst_config, &master_bus),TAG,"master bus failed to create");
@@ -33,7 +35,7 @@ esp_err_t max30102_i2c_init(void){
 
     ESP_RETURN_ON_ERROR(i2c_master_bus_add_device(master_bus, &dev_cfg, &max30102),TAG,"Failed to add MAX30102 on master bus");
 
-    ESP_LOGI(TAG, "I2C master ready; ESP32 @ 0x%02X", ESP_ADDR);
+    ESP_LOGI(TAG, "I2C master ready; ESP32 @ 0x%02X", MAX30102_ADDR);
 
     return ESP_OK;
 }
@@ -57,7 +59,7 @@ esp_err_t max30102_readRegisterN(uint8_t reg, uint8_t *data, size_t N){
 
 
 esp_err_t max30102_writeRegister(const uint8_t *reg_data){
-    return i2c_master_transmit(max30102, reg_data, 2, -1);
+    return i2c_master_transmit(max30102, reg_data, 2, -1);//it automatically increments to get to the next element inside of the array
 }
 
 
@@ -65,4 +67,9 @@ esp_err_t max30102_writeRegisterN(const uint8_t *reg_data, size_t N){
     return i2c_master_transmit(max30102, reg_data, N, -1);
 }
 
-//create a function that will read part  id
+esp_err_t probe(uint16_t address){
+
+    return i2c_master_probe(master_bus,address,15);
+}
+
+//create a function that will read part id and rev id

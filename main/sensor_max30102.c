@@ -18,6 +18,8 @@
 #define DIE_TEMP_INT_REG 0x1F
 #define DIE_TEMP_FRAC_REG 0x20
 #define DIE_TEMP_CONFIG_REG 0x21
+#define REV_ID_REG 0xFE
+#define PART_ID_REG 0xFF
 
 static const char *TAG = "MAX30102";
 
@@ -144,4 +146,12 @@ esp_err_t readMAX30102(uint32_t *irData,uint32_t *redData){
     data[5] = LED2[7:0]    // IR LED, least significant byte
     */
 
+}
+
+esp_err_t readSensor(uint8_t *partID,uint8_t *revID ){
+
+ESP_RETURN_ON_ERROR(max30102_readRegister(PART_ID_REG,partID),TAG,"couldn't read Part ID");
+ESP_RETURN_ON_ERROR(max30102_readRegister(REV_ID_REG,revID),TAG,"couldn't read Revision ID");
+
+return ESP_OK;
 }

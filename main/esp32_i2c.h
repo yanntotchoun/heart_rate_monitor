@@ -11,5 +11,6 @@ esp_err_t max30102_i2c_init(void);
 esp_err_t max30102_readRegister(uint8_t reg, uint8_t *data);  
 esp_err_t max30102_readRegisterN(uint8_t reg, uint8_t *data, size_t N);  
 esp_err_t max30102_writeRegister(const uint8_t *reg_data);  
-esp_err_t max30102_writeRegisterN(const uint8_t *reg_data, size_t N);  
+esp_err_t max30102_writeRegisterN(const uint8_t *reg_data, size_t N); 
+esp_err_t probe(uint16_t );   
 #endif // ESP32_I2C_H_
