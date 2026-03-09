@@ -7,6 +7,12 @@
 #include "esp_log.h"
 #include "esp_check.h"
 
+#include <stdio.h>
+#include "freertos/FreeRTOS.h"
+#include "freertos/task.h"
+
+extern i2c_master_bus_handle_t master_bus;
+extern i2c_master_dev_handle_t max30102;
 esp_err_t max30102_i2c_init(void);
 esp_err_t max30102_readRegister(uint8_t reg, uint8_t *data);  
 esp_err_t max30102_readRegisterN(uint8_t reg, uint8_t *data, size_t N);  

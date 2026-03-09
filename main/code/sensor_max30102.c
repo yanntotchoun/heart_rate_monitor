@@ -23,8 +23,15 @@
 
 static const char *TAG = "MAX30102";
 
+esp_err_t max30102_reset(void){
+    uint8_t reset[2] = {MODE_CONFIG_REG, 0x40};
+    ESP_RETURN_ON_ERROR(max30102_writeRegister(reset), TAG, "failed to reset");
+    vTaskDelay(pdMS_TO_TICKS(100));
+    return ESP_OK;
+}
+
 esp_err_t max302102_spo2_config(void){
-    uint8_t val;
+    uint8_t val=0;
     uint8_t spo2[2];
     spo2[0] = SPO2_CONFIG_REG;
 
@@ -126,8 +133,8 @@ esp_err_t readMAX30102(uint32_t *irData,uint32_t *redData){
         {
              max30102_readRegisterN(FIFO_DATA_REG,data,6);
 
-            irData[i] =(data[0]<<16) | (data[1]<<8) | data[2];
-            redData[i]= (data[3]<<16) | (data[4]<<8) | data[5];
+           redData[i] = (data[0]<<16) | (data[1]<<8) | data[2];
+            irData[i]  = (data[3]<<16) | (data[4]<<8) | data[5];
 
             
         }

@@ -5,6 +5,7 @@
 #include "esp_log.h"
 #include "esp_check.h"
 #include "driver/uart.h"
+#include "esp32_i2c.h"
 
 
 
