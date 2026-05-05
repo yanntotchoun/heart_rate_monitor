@@ -4,7 +4,7 @@
 #include "esp_log.h"
 #include "esp_check.h"
 #include "esp32_i2c.h"
-
+#include <inttypes.h>
 
 esp_err_t max302102_spo2_config(void);
 esp_err_t max302102_mode_config(void);
@@ -16,6 +16,7 @@ uint8_t readReadPointer(void);
 esp_err_t readMAX30102(uint32_t *irData,uint32_t *redData);
 esp_err_t readSensor(uint8_t*,uint8_t*);
 esp_err_t max30102_reset(void);
+esp_err_t reset_fifo(void);
 
 
 

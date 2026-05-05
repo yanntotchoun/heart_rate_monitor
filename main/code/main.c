@@ -4,8 +4,7 @@
  * SPDX-License-Identifier: CC0-1.0
  */
 
- // COLD JOINTS????, CHECK SOLDERING
-
+#include <inttypes.h>
 #include <stdio.h>
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
@@ -69,6 +68,8 @@ void app_main(void)
 
     uint8_t part = 0, rev = 0;
 
+    uint32_t irData =0, redData =0;
+
     vTaskDelay(pdMS_TO_TICKS(100)); 
     ESP_ERROR_CHECK(max30102_i2c_init());
     ESP_LOGI(TAG1, "I2C is working");
@@ -97,20 +98,26 @@ void app_main(void)
     max302102_fifo_config();
     vTaskDelay(pdMS_TO_TICKS(100)); 
     
-     readSensor(&part,&rev);
-        vTaskDelay(pdMS_TO_TICKS(1000));
-        printf("Part ID: 0x%02X\n",part);
-        printf("Revision ID: 0x%02X ",rev);
-    
+    reset_fifo();
+     ESP_LOGI("DEBUG", "reset FIFO: %s", r3 == ESP_OK ? "RESET" : "NOT RESET");
     uart_init();
 
-
-    while (1) {
-        readSensor(&part,&rev);
+      readSensor(&part,&rev);
         vTaskDelay(pdMS_TO_TICKS(1000));
         printf("Part ID: 0x%02X\n",part);
         printf("Revision ID: 0x%02X ",rev);
         //printf("you are a bum\n");
         vTaskDelay(pdMS_TO_TICKS(1000));
+
+    while (1) {
+      esp_err_t tag = readMAX30102(&irData,&redData);
+       ESP_LOGI("TAG", "IR: %lu RED: %lu", irData, redData);
+
+      if(tag ==ESP_OK){
+      ESP_LOGI("TAG", "IR: %lu RED: %lu", irData, redData);
+
+      }
+      vTaskDelay(pdMS_TO_TICKS(1000));
     }
 }
+  

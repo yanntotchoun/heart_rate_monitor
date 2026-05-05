@@ -50,7 +50,7 @@ esp_err_t max302102_mode_config(void){
     mode[0] = MODE_CONFIG_REG;
     
 
-    val = 0x06;
+    val = 0x03;
     mode[1] = val;
     
     ESP_RETURN_ON_ERROR(max30102_writeRegister(mode), TAG, "failed to write mode");
@@ -113,11 +113,15 @@ uint8_t readReadPointer(void){
 }
 
 esp_err_t readMAX30102(uint32_t *irData,uint32_t *redData){
-    uint8_t data[6];// temporary buffer for 3 bytes of Red and 3 bytes of ir
+    uint8_t data[32];// temporary buffer for 3 bytes of Red and 3 bytes of ir
     uint8_t readPointer,writePointer,samplesToRead,availableSamples;
+    uint8_t writeRegData[2];
+    writeRegData[0]=FIFO_W_REG;
 
     readPointer = readReadPointer();
+    printf("%u\n", readPointer);
     writePointer = readWritePointer();
+    printf("%u\n", writePointer);
     
     //prevent FIFO wraparound
     if(writePointer>=readPointer){
@@ -125,19 +129,29 @@ esp_err_t readMAX30102(uint32_t *irData,uint32_t *redData){
     }else{
         availableSamples= (32-readPointer)+writePointer;
     }
+    printf("%u\n", availableSamples);
 
     samplesToRead = availableSamples;// taking a snapshot because new data can come in while we do that
+
+   printf("%u\n", samplesToRead);
  
     if(samplesToRead > 0){
         for (size_t i = 0; i < samplesToRead; i++)
         {
-             max30102_readRegisterN(FIFO_DATA_REG,data,6);
+            max30102_readRegisterN(FIFO_DATA_REG,data,6);
 
-           redData[i] = (data[0]<<16) | (data[1]<<8) | data[2];
-            irData[i]  = (data[3]<<16) | (data[4]<<8) | data[5];
-
+            redData[i] = ((uint32_t)data[0]<<16) | ((uint32_t)data[1]<<8) | (uint32_t)data[2];
+            irData[i]  = (uint32_t)(data[3]<<16) | (uint32_t)(data[4]<<8) | (uint32_t)data[5];
+            printf("%" PRIu32 "\n",*redData);
+            printf("%" PRIu32 "\n",*irData);
             
         }
+
+        
+        uint8_t readPointerUpdated = (writePointer+availableSamples)%32;
+        writeRegData[1]=readPointerUpdated;
+        max30102_writeRegister(writeRegData);
+         printf("%u\n", writePointer);
 
         return ESP_OK;
 
@@ -161,4 +175,19 @@ ESP_RETURN_ON_ERROR(max30102_readRegister(PART_ID_REG,partID),TAG,"couldn't read
 ESP_RETURN_ON_ERROR(max30102_readRegister(REV_ID_REG,revID),TAG,"couldn't read Revision ID");
 
 return ESP_OK;
+}
+
+esp_err_t reset_fifo(void){
+    uint8_t readReset[2];
+     uint8_t writeReset[2];
+
+     readReset[0]=FIFO_R_REG;
+     writeReset[0]=FIFO_W_REG;
+
+    readReset[1]=0x00;
+    writeReset[1]=0x00;
+
+    ESP_RETURN_ON_ERROR(max30102_writeRegister(readReset),TAG,"couldn't reset read pointer");
+    ESP_RETURN_ON_ERROR(max30102_writeRegister(writeReset),TAG,"couldn't reset write pointer");
+    return ESP_OK;
 }
